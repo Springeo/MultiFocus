@@ -52,20 +52,19 @@
 						currentValue = currentValue.slice(0, currentValue.length - 1);
 						$fakeInputs.html(currentValue);
 						break;
-					case 86: // Ctrl + v
-						if (e.ctrlKey) {
-							$focusInput.val("");
-							document.execCommand('paste');
-							let pastText = $focusInput.val();
-							currentValue += pastText;
-							$fakeInputs.html(currentValue);
-						}
-						break;
+				}
+			});
+
+			$focusInput.on('paste.MultiFocus', (e)=>{
+				var clipboardStack = e.originalEvent.clipboardData.items;
+				if (clipboardStack.length){
+					currentValue += e.originalEvent.clipboardData.getData(clipboardStack[0].type);
+					$fakeInputs.html(currentValue);
 				}
 			});
 		});
 
-		$focusableInputs.focusout(function (e) {
+		$focusableInputs.blur(function (e) {
 			if ($fakeContainers)
 				$fakeContainers.remove();
 			$focusInput.off(".MultiFocus");
@@ -99,7 +98,7 @@
 		return scope;
 	};
 
-	MultiFocus.prototype.close = function () {
+	MultiFocus.prototype.remove = function () {
 		$(this.selector).off();
 	};
 
